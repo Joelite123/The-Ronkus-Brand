@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "The Ronkus Brand"
+description = "A premium, responsive storefront homepage for The Ronkus Brand, showcasing handcrafted African fashion, featured products, customer testimonials, registration and the shoemaking academy."
+version = "1.0.0"
+id = "artifacts/ronkus-brand"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20117
+
+[services.development]
+run = "pnpm --filter @workspace/ronkus-brand run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/ronkus-brand", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/ronkus-brand/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20117"
+BASE_PATH = "/"
