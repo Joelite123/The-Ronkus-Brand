@@ -6,6 +6,7 @@ import {
   ChevronDown,
   Instagram,
   Menu,
+  Search,
   ShoppingBag,
   X,
 } from 'lucide-react';
@@ -16,6 +17,17 @@ import {
   testimonialImages,
   type Product,
 } from '@/data/catalog';
+import { CustomizeItemDialog } from '@/components/customize-item-dialog';
+import { ShoppingCartDialog } from '@/components/shopping-cart-dialog';
+import { useShop } from '@/components/shop-provider';
+import {
+  createCartItemDraft,
+  filterProducts,
+  formatNaira,
+  getSelectedPrice,
+  type CustomizationDetails,
+  type ProductSelection,
+} from '@/lib/shop';
 
 const instagramUrl = 'https://instagram.com/the_ronkus_brand?dlrf=MTBzaDJjY3dybGhlOA%3D%3D';
 const facebookUrl = 'https://www.facebook.com/share/14sWXoMEgGM/';
@@ -34,9 +46,10 @@ function BrandLogo({ className = '' }: { className?: string }) {
   );
 }
 
-function Header() {
+function Header({ onSelectCategory }: { onSelectCategory: (category: string) => void }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
+  const { itemCount, setCartOpen } = useShop();
 
   const closeMenus = () => {
     setMobileOpen(false);
@@ -62,7 +75,14 @@ function Header() {
             {shopOpen && (
               <div className="shop-dropdown" id="shop-menu">
                 {categories.map((category) => (
-                  <a key={category.name} href="#categories" onClick={closeMenus}>
+                  <a
+                    key={category.name}
+                    href="#products"
+                    onClick={() => {
+                      closeMenus();
+                      onSelectCategory(category.name);
+                    }}
+                  >
                     {category.name}
                   </a>
                 ))}
@@ -74,9 +94,16 @@ function Header() {
           ))}
         </nav>
         <div className="header-actions">
-          <a className="cart-link" href="#products" aria-label="Shopping bag, shopping opens in a later release">
+          <button
+            className="cart-link"
+            type="button"
+            aria-label={`Open shopping bag, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
+            aria-haspopup="dialog"
+            onClick={() => setCartOpen(true)}
+          >
             <ShoppingBag size={19} strokeWidth={1.6} />
-          </a>
+            {itemCount > 0 && <span className="cart-count" aria-hidden="true">{itemCount}</span>}
+          </button>
           <button
             className="mobile-menu-button"
             type="button"
@@ -102,7 +129,16 @@ function Header() {
           {shopOpen && (
             <div className="mobile-shop-list">
               {categories.map((category) => (
-                <a href="#categories" key={category.name} onClick={closeMenus}>{category.name}</a>
+                <a
+                  href="#products"
+                  key={category.name}
+                  onClick={() => {
+                    closeMenus();
+                    onSelectCategory(category.name);
+                  }}
+                >
+                  {category.name}
+                </a>
               ))}
             </div>
           )}
@@ -173,7 +209,7 @@ function SectionHeading({
   );
 }
 
-function CategorySection() {
+function CategorySection({ onSelectCategory }: { onSelectCategory: (category: string) => void }) {
   return (
     <section className="category-section page-shell" id="categories">
       <div className="category-heading-row">
@@ -182,7 +218,12 @@ function CategorySection() {
       </div>
       <div className="category-grid">
         {categories.map((category, index) => (
-          <a className={`category-card category-card-${index + 1}`} href="#products" key={category.name}>
+          <a
+            className={`category-card category-card-${index + 1}`}
+            href="#products"
+            key={category.name}
+            onClick={() => onSelectCategory(category.name)}
+          >
             <img src={category.image} alt="" loading="eager" />
             <span className="category-shade" />
             <span className="category-card-content">
@@ -200,25 +241,30 @@ function CategorySection() {
   );
 }
 
-function ProductSelectors({ product }: { product: Product }) {
-  const [selection, setSelection] = useState(product.yardage?.[0]?.label ?? product.sizes?.[0] ?? '');
-  const [color, setColor] = useState(product.colors?.[0] ?? '');
-  const selectedYardage = product.yardage?.find((option) => option.label === selection);
-  const price = selectedYardage?.price ?? product.price;
+function ProductSelectors({
+  product,
+  selection,
+  onChange,
+}: {
+  product: Product;
+  selection: ProductSelection;
+  onChange: (selection: ProductSelection) => void;
+}) {
+  const selectedPrice = getSelectedPrice(product, selection);
 
   return (
     <div className="product-options">
-      {product.sizes && (
+      {product.options.sizes && (
         <fieldset className="selector-group">
-          <legend>Size</legend>
+          <legend>Size <span>{selection.size ? `· ${selection.size}` : '· Choose one'}</span></legend>
           <div className="size-options">
-            {product.sizes.map((size) => (
+            {product.options.sizes.map((size) => (
               <button
-                className={selection === size ? 'size-choice selected' : 'size-choice'}
+                className={selection.size === size ? 'size-choice selected' : 'size-choice'}
                 type="button"
                 key={size}
-                aria-pressed={selection === size}
-                onClick={() => setSelection(size)}
+                aria-pressed={selection.size === size}
+                onClick={() => onChange({ ...selection, size })}
               >
                 {size}
               </button>
@@ -226,47 +272,96 @@ function ProductSelectors({ product }: { product: Product }) {
           </div>
         </fieldset>
       )}
-      {product.yardage && (
+      {product.options.yardage && (
         <label className="selector-group yardage-select">
           <span>Yardage</span>
-          <select value={selection} onChange={(event) => setSelection(event.target.value)}>
-            {product.yardage.map((option) => (
-              <option value={option.label} key={option.label}>{option.label}</option>
+          <select
+            value={selection.yardage ?? ''}
+            onChange={(event) => onChange({ ...selection, yardage: event.target.value })}
+            required
+          >
+            <option value="">Choose yardage</option>
+            {product.options.yardage.map((option) => (
+              <option value={option.label} key={option.label}>
+                {option.label} — {formatNaira(option.price)}
+              </option>
             ))}
           </select>
         </label>
       )}
-      {product.colors && (
+      {product.options.colors && (
         <fieldset className="selector-group">
-          <legend>Color <span>{color}</span></legend>
+          <legend>Colour <span>{selection.color ? `· ${selection.color}` : '· Choose one'}</span></legend>
           <div className="color-options">
-            {product.colors.map((option) => (
+            {product.options.colors.map((option) => (
               <button
-                className={`color-choice color-${option.toLowerCase()} ${color === option ? 'selected' : ''}`}
+                className={`color-choice color-${option.toLowerCase()} ${selection.color === option ? 'selected' : ''}`}
                 type="button"
                 key={option}
-                aria-label={`Select ${option}`}
-                aria-pressed={color === option}
-                onClick={() => setColor(option)}
+                aria-label={`Select ${option} colour`}
+                aria-pressed={selection.color === option}
+                onClick={() => onChange({ ...selection, color: option })}
               />
             ))}
           </div>
         </fieldset>
       )}
       <div className="product-price-row">
-        <span className="product-price">{price}</span>
-        {product.yardage && <span className="price-unit">for {selection}</span>}
+        <span className="product-price">{selectedPrice === undefined ? 'Choose yardage' : formatNaira(selectedPrice)}</span>
+        {selection.yardage && <span className="price-unit">for {selection.yardage}</span>}
       </div>
     </div>
   );
 }
 
-function ProductCard({ product, index }: { product: Product; index: number }) {
+function ProductCard({
+  product,
+  index,
+  onCustomize,
+}: {
+  product: Product;
+  index: number;
+  onCustomize: (product: Product, color: string) => void;
+}) {
+  const { addItem } = useShop();
+  const [selection, setSelection] = useState<ProductSelection>({});
+  const [added, setAdded] = useState(false);
+  const selectedPrice = getSelectedPrice(product, selection);
+  const needsSize = Boolean(product.options.sizes && !selection.size);
+  const needsColor = Boolean(product.options.colors && !selection.color);
+  const needsYardage = Boolean(product.options.yardage && !selection.yardage);
+  const canAdd = !needsSize && !needsColor && !needsYardage;
+  const customizable = Boolean(product.customization?.enabled);
+
+  const updateSelection = (nextSelection: ProductSelection) => {
+    setSelection(nextSelection);
+    setAdded(false);
+  };
+
+  const handleAdd = () => {
+    if (!canAdd) return;
+    if (customizable) {
+      if (selection.color) onCustomize(product, selection.color);
+      return;
+    }
+    addItem(createCartItemDraft(product, selection));
+    setAdded(true);
+  };
+
+  const buttonLabel = customizable
+    ? (needsColor ? 'Choose a colour to customize' : 'Customize Your Item')
+    : (!canAdd
+        ? `Choose ${needsSize ? 'size' : needsColor ? 'colour' : 'yardage'} to add`
+        : `${added ? 'Add one more' : 'Add to Cart'} · ${formatNaira(selectedPrice ?? product.price)}`);
+
   return (
-    <article className="product-card" id={product.customize ? 'product-customize' : undefined}>
+    <article
+      className="product-card"
+      id={product.customization?.enabled ? 'product-customize' : `product-${product.id}`}
+    >
       <div className="product-image-wrap">
         <img src={product.image} alt={product.name} loading="eager" />
-        {product.badge && <span className="product-badge">{product.badge}</span>}
+        {product.availability && <span className="product-badge">{product.availability}</span>}
         <span className="product-index">0{index + 1}</span>
       </div>
       <div className="product-card-body">
@@ -277,18 +372,38 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
           </div>
         </div>
         <p className="product-description">{product.description}</p>
-        <ProductSelectors product={product} />
-        {product.customize && (
-          <a className="product-customize-button" href="#footer">
-            Customize Your Item <ArrowRight size={15} />
-          </a>
-        )}
+        <ProductSelectors product={product} selection={selection} onChange={updateSelection} />
+        <button
+          className={`product-action-button ${customizable ? 'product-customize-button' : ''}`}
+          type="button"
+          disabled={!canAdd}
+          onClick={handleAdd}
+        >
+          {buttonLabel}
+          {customizable && <ArrowRight size={15} />}
+        </button>
+        {added && <p className="product-added-note" role="status">Added to your shopping bag.</p>}
       </div>
     </article>
   );
 }
 
-function ProductSection() {
+function ProductSection({
+  activeCategory,
+  onCategoryChange,
+  searchText,
+  onSearchChange,
+  onCustomize,
+}: {
+  activeCategory: string;
+  onCategoryChange: (category: string) => void;
+  searchText: string;
+  onSearchChange: (query: string) => void;
+  onCustomize: (product: Product, color: string) => void;
+}) {
+  const filteredProducts = filterProducts(products, searchText, activeCategory);
+  const hasFilter = Boolean(searchText.trim()) || activeCategory !== 'All categories';
+
   return (
     <section className="product-section" id="products">
       <div className="page-shell">
@@ -298,13 +413,65 @@ function ProductSection() {
             title="Featured Products"
             intro="A few favourites from our world of personal, expressive style."
           />
-          <span className="featured-count">01 — 04</span>
+          <span className="featured-count">
+            {filteredProducts.length === products.length ? '01 — 04' : `${filteredProducts.length} OF 04`}
+          </span>
         </div>
-        <div className="product-grid">
-          {products.map((product, index) => (
-            <ProductCard key={product.name} product={product} index={index} />
-          ))}
+        <div className="product-controls">
+          <label className="product-search">
+            <Search size={17} aria-hidden="true" />
+            <span className="sr-only">Search featured products</span>
+            <input
+              type="search"
+              value={searchText}
+              onChange={(event) => onSearchChange(event.target.value)}
+              placeholder="Search the collection"
+            />
+            {searchText && (
+              <button type="button" aria-label="Clear product search" onClick={() => onSearchChange('')}>
+                <X size={16} />
+              </button>
+            )}
+          </label>
+          <label className="product-category-filter">
+            <span>Category</span>
+            <select value={activeCategory} onChange={(event) => onCategoryChange(event.target.value)}>
+              <option>All categories</option>
+              {categories.map((category) => <option key={category.name}>{category.name}</option>)}
+            </select>
+          </label>
         </div>
+        {filteredProducts.length > 0 ? (
+          <div className="product-grid">
+            {filteredProducts.map((product, index) => (
+              <ProductCard key={product.id} product={product} index={index} onCustomize={onCustomize} />
+            ))}
+          </div>
+        ) : (
+          <div className="products-empty-state">
+            <p className="eyebrow">{activeCategory === 'All categories' ? 'No matches yet' : activeCategory}</p>
+            <h3>
+              {activeCategory === 'All categories'
+                ? `No products match “${searchText.trim()}”.`
+                : `No products are currently listed in ${activeCategory}.`}
+            </h3>
+            <p>
+              {activeCategory === 'All categories'
+                ? 'Try another search, or clear the search to see the featured collection.'
+                : 'Browse the configured featured products or contact us for help with this collection.'}
+            </p>
+            <button
+              className="commerce-secondary-button"
+              type="button"
+              onClick={() => {
+                onSearchChange('');
+                onCategoryChange('All categories');
+              }}
+            >
+              View all featured products
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -444,7 +611,7 @@ function AcademySection() {
   );
 }
 
-function Footer() {
+function Footer({ onSelectCategory }: { onSelectCategory: (category: string) => void }) {
   return (
     <footer className="site-footer" id="footer">
       <div className="page-shell footer-main">
@@ -468,7 +635,13 @@ function Footer() {
         <div className="footer-links-column">
           <p className="footer-column-title">Shop categories</p>
           {categories.map((category) => (
-            <a href="#categories" key={category.name}>{category.name}</a>
+            <a
+              href="#products"
+              key={category.name}
+              onClick={() => onSelectCategory(category.name)}
+            >
+              {category.name}
+            </a>
           ))}
         </div>
         <div className="footer-note">
@@ -486,19 +659,53 @@ function Footer() {
 }
 
 export default function Homepage() {
+  const { addItem, setCartOpen } = useShop();
+  const [activeCategory, setActiveCategory] = useState('All categories');
+  const [searchText, setSearchText] = useState('');
+  const [customizeTarget, setCustomizeTarget] = useState<{ product: Product; color: string } | null>(null);
+
+  const selectCategory = (category: string) => {
+    setActiveCategory(category);
+    setSearchText('');
+  };
+
+  const addCustomizedItem = (customization: CustomizationDetails) => {
+    if (!customizeTarget) return;
+    addItem(createCartItemDraft(
+      customizeTarget.product,
+      { color: customizeTarget.color },
+      customization,
+    ));
+    setCustomizeTarget(null);
+    setCartOpen(true);
+  };
+
   return (
     <>
-      <Header />
+      <Header onSelectCategory={selectCategory} />
       <main>
         <Hero />
-        <CategorySection />
-        <ProductSection />
+        <CategorySection onSelectCategory={selectCategory} />
+        <ProductSection
+          activeCategory={activeCategory}
+          onCategoryChange={setActiveCategory}
+          searchText={searchText}
+          onSearchChange={setSearchText}
+          onCustomize={(product, color) => setCustomizeTarget({ product, color })}
+        />
         <CraftsmanshipSection />
         <TestimonialsSection />
         <CommunitySection />
         <AcademySection />
       </main>
-      <Footer />
+      <Footer onSelectCategory={selectCategory} />
+      <CustomizeItemDialog
+        product={customizeTarget?.product ?? null}
+        selectedColor={customizeTarget?.color}
+        onClose={() => setCustomizeTarget(null)}
+        onAddToCart={addCustomizedItem}
+      />
+      <ShoppingCartDialog />
     </>
   );
 }

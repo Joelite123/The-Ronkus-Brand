@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
+import { ShopProvider } from '@/components/shop-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import Homepage from '@/components/homepage';
@@ -15,7 +16,11 @@ import {
 const queryClient = new QueryClient();
 
 function Home() {
-  return <Homepage />;
+  return (
+    <ShopProvider>
+      <Homepage />
+    </ShopProvider>
+  );
 }
 
 function Router() {

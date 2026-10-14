@@ -4,18 +4,38 @@ export type Category = {
   image: string;
 };
 
+export type YardageOption = {
+  label: string;
+  price: number;
+};
+
 export type Product = {
+  id: string;
   name: string;
   category: string;
-  price: string;
+  price: number;
   description: string;
   image: string;
-  sizes?: string[];
-  colors?: string[];
-  yardage?: { label: string; price: string }[];
-  badge?: string;
-  customize?: boolean;
+  options: {
+    sizes?: string[];
+    colors?: string[];
+    yardage?: YardageOption[];
+  };
+  availability?: string;
+  customization?: {
+    enabled: boolean;
+  };
 };
+
+export const customizationSettings = {
+  fee: 2000,
+  types: [
+    'Personalised Details',
+    'Colour/Design Changes',
+    'Branding/Logo',
+    'Other Request',
+  ],
+} as const;
 
 export const categories: Category[] = [
   {
@@ -52,42 +72,56 @@ export const categories: Category[] = [
 
 export const products: Product[] = [
   {
+    id: 'essence',
     name: 'ESSENCE',
     category: 'Footwear',
-    price: '₦15,000',
+    price: 15000,
     description: 'A refined pair of slides with a clean, versatile look, designed to bring effortless style to everyday outfits.',
     image: '/assets/essence-slides.jpg',
-    sizes: ['36', '37', '38', '39', '40', '41', '42', '43'],
-    colors: ['Black', 'Red', 'Pink'],
-    badge: 'Ready to Order',
+    options: {
+      sizes: ['36', '37', '38', '39', '40', '41', '42', '43'],
+      colors: ['Black', 'Red', 'Pink'],
+    },
+    availability: 'Ready to Order',
   },
   {
+    id: 'customized-apron',
     name: 'Customized Apron',
     category: 'Chef Aprons & Caps',
-    price: '₦10,000',
+    price: 10000,
     description: 'A practical apron personalized with your chosen design or branding—ideal for cooking, baking and business use.',
     image: '/assets/aprons.jpg',
-    colors: ['Black', 'Red', 'Pink'],
-    customize: true,
+    options: {
+      colors: ['Black', 'Red', 'Pink'],
+    },
+    customization: {
+      enabled: true,
+    },
   },
   {
+    id: 'african-print-fabrics',
     name: 'African Print Fabrics',
     category: 'Clothing & Fabrics',
-    price: '',
+    price: 3000,
     description: 'Vibrant African print fabrics with expressive patterns for creating distinctive outfits and personal styles.',
     image: '/assets/african-fabric.jpg',
-    yardage: [
-      { label: '3 yards', price: '₦3,000' },
-      { label: '6 yards', price: '₦6,000' },
-    ],
+    options: {
+      yardage: [
+        { label: '3 yards', price: 3000 },
+        { label: '6 yards', price: 6000 },
+      ],
+    },
   },
   {
+    id: 'men-vintage-shirt',
     name: 'Men Vintage Shirt',
     category: 'Clothing & Fabrics',
-    price: '₦10,000',
+    price: 10000,
     description: 'A statement vintage-style shirt featuring expressive prints, with other beautiful prints available.',
     image: '/assets/print-shirt.jpg',
-    sizes: ['S', 'M', 'L', 'XL'],
+    options: {
+      sizes: ['S', 'M', 'L', 'XL'],
+    },
   },
 ];
 
