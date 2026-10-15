@@ -1,0 +1,1 @@
+- [Mobile visual viewport](mobile-visual-viewport.md) — use the visible viewport for mobile overlays; browser layout width can be misleading.
