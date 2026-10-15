@@ -1340,26 +1340,6 @@ a {
   font-size: 0.68rem;
 }
 
-.product-customize-button {
-  display: flex;
-  min-height: 39px;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 1px;
-  border-top: 1px solid #e3d9c9;
-  color: #9f231f;
-  font-size: 0.7rem;
-  font-weight: 700;
-}
-
-.product-customize-button svg {
-  transition: transform 180ms ease;
-}
-
-.product-customize-button:hover svg {
-  transform: translateX(4px);
-}
-
 .craft-section {
   position: relative;
   overflow: hidden;

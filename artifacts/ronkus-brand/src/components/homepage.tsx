@@ -340,19 +340,18 @@ function ProductCard({
 
   const handleAdd = () => {
     if (!canAdd) return;
-    if (customizable) {
-      if (selection.color) onCustomize(product, selection.color);
-      return;
-    }
     addItem(createCartItemDraft(product, selection));
     setAdded(true);
   };
 
-  const buttonLabel = customizable
-    ? (needsColor ? 'Choose a colour to customize' : 'Customize Your Item')
-    : (!canAdd
-        ? `Choose ${needsSize ? 'size' : needsColor ? 'colour' : 'yardage'} to add`
-        : `${added ? 'Add one more' : 'Add to Cart'} · ${formatNaira(selectedPrice ?? product.price)}`);
+  const handleCustomize = () => {
+    if (!canAdd || !customizable || !selection.color) return;
+    onCustomize(product, selection.color);
+  };
+
+  const buttonLabel = !canAdd
+    ? `Choose ${needsSize ? 'size' : needsColor ? 'colour' : 'yardage'} to add`
+    : `${added ? 'Add one more' : 'Add to Cart'} · ${formatNaira(selectedPrice ?? product.price)}`;
 
   return (
     <article
@@ -373,15 +372,27 @@ function ProductCard({
         </div>
         <p className="product-description">{product.description}</p>
         <ProductSelectors product={product} selection={selection} onChange={updateSelection} />
-        <button
-          className={`product-action-button ${customizable ? 'product-customize-button' : ''}`}
-          type="button"
-          disabled={!canAdd}
-          onClick={handleAdd}
-        >
-          {buttonLabel}
-          {customizable && <ArrowRight size={15} />}
-        </button>
+        <div className="product-action-group">
+          <button
+            className="product-action-button"
+            type="button"
+            disabled={!canAdd}
+            onClick={handleAdd}
+          >
+            {buttonLabel}
+          </button>
+          {customizable && (
+            <button
+              className="product-action-button product-action-secondary"
+              type="button"
+              disabled={!canAdd}
+              onClick={handleCustomize}
+            >
+              {needsColor ? 'Choose a colour to customize' : 'Customize Your Item'}
+              <ArrowRight size={15} aria-hidden="true" />
+            </button>
+          )}
+        </div>
         {added && <p className="product-added-note" role="status">Added to your shopping bag.</p>}
       </div>
     </article>
