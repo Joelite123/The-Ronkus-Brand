@@ -766,19 +766,19 @@
 
   .commerce-dialog {
     position: fixed !important;
-    top: 50dvh !important;
+    top: var(--visible-viewport-center-y, 50dvh) !important;
     right: auto !important;
     bottom: auto !important;
-    left: 50vw !important;
+    left: var(--visible-viewport-center-x, 50vw) !important;
     transform: translate(-50%, -50%) !important;
     translate: none !important;
-    width: min(620px, calc(100vw - 18px)) !important;
-    max-height: calc(100dvh - 18px) !important;
-    padding: 24px 18px !important;
+    width: min(400px, calc(var(--visible-viewport-width, 100vw) - 40px)) !important;
+    max-height: calc(var(--visible-viewport-height, 100dvh) - 32px) !important;
+    padding: 22px 16px !important;
   }
 
   .cart-dialog {
-    height: calc(100dvh - 18px);
+    height: calc(var(--visible-viewport-height, 100dvh) - 32px);
   }
 
   .commerce-dialog-heading {

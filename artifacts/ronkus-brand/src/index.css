@@ -517,14 +517,25 @@
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
+  width: 100%;
+  max-width: 100%;
   min-width: 320px;
+  overflow-x: clip;
   background: #f6f2e9;
   color: #281f1b;
   font-family: var(--app-font-sans);
+}
+
+#root {
+  width: 100%;
+  min-width: 0;
 }
 
 button,
