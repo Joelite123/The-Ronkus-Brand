@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { customizationSettings, products } from '../src/data/catalog.ts';
+import { featuredProductsDataSource } from '../src/data/featured-products.ts';
 import {
   buildWhatsAppMessage,
   buildWhatsAppUrl,
@@ -14,6 +15,12 @@ import {
 const essence = products.find((product) => product.id === 'essence')!;
 const apron = products.find((product) => product.id === 'customized-apron')!;
 const fabric = products.find((product) => product.id === 'african-print-fabrics')!;
+
+test('featured products are exposed through a replaceable local data source', () => {
+  const featuredProducts = featuredProductsDataSource.listFeaturedProducts();
+  assert.deepEqual(featuredProducts.map((product) => product.id), products.map((product) => product.id));
+  assert.equal(featuredProducts.length, 4);
+});
 
 test('cart additions require each configured option', () => {
   assert.throws(() => createCartItemDraft(essence, { size: '36' }), /Select a colour/);

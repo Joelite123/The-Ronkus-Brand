@@ -727,6 +727,10 @@ a {
   overflow: hidden;
 }
 
+.site-header .brand-logo {
+  background-color: #000;
+}
+
 .brand-logo img {
   display: block;
   width: 100%;
@@ -865,7 +869,7 @@ a {
 
 .hero-copy h1 {
   max-width: 560px;
-  margin: 23px 0 21px;
+  margin: 0 0 21px;
   color: #2b201d;
   font-family: var(--app-font-serif);
   font-size: clamp(3.4rem, 6.2vw, 6.45rem);
@@ -1890,7 +1894,7 @@ a {
 
   .hero-copy h1 {
     max-width: 570px;
-    margin: 16px 0 16px;
+    margin: 0 0 16px;
     font-size: clamp(3.4rem, 13vw, 5rem);
   }
 

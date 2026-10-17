@@ -13,10 +13,10 @@ import {
 import {
   categories,
   communityImages,
-  products,
   testimonialImages,
   type Product,
 } from '@/data/catalog';
+import { featuredProductsDataSource } from '@/data/featured-products';
 import { CustomizeItemDialog } from '@/components/customize-item-dialog';
 import { ShoppingCartDialog } from '@/components/shopping-cart-dialog';
 import { useShop } from '@/components/shop-provider';
@@ -156,7 +156,6 @@ function Hero() {
     <section className="hero-section" id="home">
       <div className="page-shell hero-grid">
         <div className="hero-copy fade-up">
-          <p className="eyebrow">WE MAKE YOUR OUTFITS COMPLETE.</p>
           <h1>We Make Your <em>Outfits</em> Complete.</h1>
           <p className="hero-description">
             Discover handcrafted footwear, expressive fashion, statement accessories and personalized pieces made to complement your style.
@@ -412,7 +411,8 @@ function ProductSection({
   onSearchChange: (query: string) => void;
   onCustomize: (product: Product, color: string) => void;
 }) {
-  const filteredProducts = filterProducts(products, searchText, activeCategory);
+  const featuredProducts = featuredProductsDataSource.listFeaturedProducts();
+  const filteredProducts = filterProducts(featuredProducts, searchText, activeCategory);
   const hasFilter = Boolean(searchText.trim()) || activeCategory !== 'All categories';
 
   return (
@@ -425,7 +425,9 @@ function ProductSection({
             intro="A few favourites from our world of personal, expressive style."
           />
           <span className="featured-count">
-            {filteredProducts.length === products.length ? '01 — 04' : `${filteredProducts.length} OF 04`}
+            {filteredProducts.length === featuredProducts.length
+              ? `01 — ${String(featuredProducts.length).padStart(2, '0')}`
+              : `${filteredProducts.length} OF ${featuredProducts.length}`}
           </span>
         </div>
         <div className="product-controls">
