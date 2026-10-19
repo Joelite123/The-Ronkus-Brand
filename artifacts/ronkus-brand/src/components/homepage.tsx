@@ -162,7 +162,7 @@ function Hero() {
           </p>
           <div className="hero-actions">
             <a className="button-primary" href="#products">Shop Collection <ArrowRight size={16} /></a>
-            <a className="button-outline" href="#product-customize">Customize Your Item</a>
+            <a className="button-outline" href="#community">Join the Community</a>
           </div>
           <div className="hero-footnote">
             <span className="gold-rule" />
@@ -585,7 +585,7 @@ function TestimonialsSection() {
 
 function CommunitySection() {
   return (
-    <section className="community-section">
+    <section className="community-section" id="community">
       <div className="page-shell">
         <div className="community-heading">
           <div>

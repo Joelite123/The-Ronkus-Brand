@@ -77,7 +77,7 @@ export const products: Product[] = [
     category: 'Footwear',
     price: 15000,
     description: 'A refined pair of slides with a clean, versatile look, designed to bring effortless style to everyday outfits.',
-    image: '/assets/essence-slides.jpg',
+    image: '/assets/essence-featured.jpg',
     options: {
       sizes: ['36', '37', '38', '39', '40', '41', '42', '43'],
       colors: ['Black', 'Red', 'Pink'],
