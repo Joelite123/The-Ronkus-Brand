@@ -1,0 +1,8 @@
+[build]
+command = "pnpm --filter @workspace/ronkus-brand build"
+publish = "artifacts/ronkus-brand/dist/public"
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
