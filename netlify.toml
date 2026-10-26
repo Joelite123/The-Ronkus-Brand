@@ -2,6 +2,9 @@
 command = "pnpm --filter @workspace/ronkus-brand build"
 publish = "artifacts/ronkus-brand/dist/public"
 
+[build.environment]
+NODE_VERSION = "22"
+
 [[redirects]]
 from = "/*"
 to = "/index.html"
