@@ -531,7 +531,7 @@ function CarouselSection({
   };
 
   return (
-    <div className="carousel-shell">
+    <div className={`carousel-shell${testimonials ? '' : ' community-carousel'}`}>
       <div
         ref={trackRef}
         className={`carousel-track ${testimonials ? 'testimonial-track' : 'community-track'}`}
@@ -602,8 +602,8 @@ function CommunitySection() {
             </div>
           </div>
         </div>
-        <CarouselSection items={communityImages} />
       </div>
+      <CarouselSection items={communityImages} />
     </section>
   );
 }

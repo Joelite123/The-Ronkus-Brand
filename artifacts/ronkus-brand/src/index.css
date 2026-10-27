@@ -517,15 +517,11 @@
 
 html {
   scroll-behavior: smooth;
-  width: 100%;
-  max-width: 100%;
   overflow-x: clip;
 }
 
 body {
   margin: 0;
-  width: 100%;
-  max-width: 100%;
   min-width: 320px;
   overflow-x: clip;
   background: #f6f2e9;
@@ -534,7 +530,6 @@ body {
 }
 
 #root {
-  width: 100%;
   min-width: 0;
 }
 
@@ -1556,8 +1551,13 @@ a {
 
 .community-track {
   gap: 15px;
-  margin-right: calc((100vw - min(100vw - 64px, 1320px)) / -2);
-  padding-right: max(32px, calc((100vw - 1320px) / 2));
+  margin-left: max(32px, calc((100% - 1320px) / 2));
+  padding-right: max(32px, calc((100% - 1320px) / 2));
+}
+
+.community-carousel .carousel-controls {
+  width: min(100% - 64px, 1320px);
+  margin: 4px auto 0;
 }
 
 .community-track .carousel-item {
@@ -2128,8 +2128,12 @@ a {
 
   .community-track {
     gap: 11px;
-    margin-right: -18px;
+    margin-left: 18px;
     padding-right: 18px;
+  }
+
+  .community-carousel .carousel-controls {
+    width: min(100% - 36px, 1320px);
   }
 
   .community-track .carousel-item {
