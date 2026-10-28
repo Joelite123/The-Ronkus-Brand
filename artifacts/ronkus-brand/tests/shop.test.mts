@@ -3,6 +3,11 @@ import test from 'node:test';
 import { customizationSettings, products } from '../src/data/catalog.ts';
 import { featuredProductsDataSource } from '../src/data/featured-products.ts';
 import {
+  findCategoryBySlug,
+  findSubcategoryBySlug,
+  slugifyLabel,
+} from '../src/lib/catalog.ts';
+import {
   buildWhatsAppMessage,
   buildWhatsAppUrl,
   createCartItemDraft,
@@ -15,6 +20,20 @@ import {
 const essence = products.find((product) => product.id === 'essence')!;
 const apron = products.find((product) => product.id === 'customized-apron')!;
 const fabric = products.find((product) => product.id === 'african-print-fabrics')!;
+
+test('category slugs normalize names and preserve category ordering', () => {
+  assert.equal(slugifyLabel('Bags & Totes'), 'bags-totes');
+  assert.equal(slugifyLabel('Clothing & Fabrics'), 'clothing-fabrics');
+  assert.equal(findCategoryBySlug('bags-totes')?.name, 'Bags & Totes');
+  assert.equal(findCategoryBySlug('unknown'), undefined);
+});
+
+test('subcategory lookup uses the configured category list', () => {
+  const clothing = findCategoryBySlug('clothing-fabrics');
+  assert.ok(clothing);
+  assert.equal(findSubcategoryBySlug(clothing, 'joggers'), 'Joggers');
+  assert.equal(findSubcategoryBySlug(clothing, 'unknown'), undefined);
+});
 
 test('featured products are exposed through a replaceable local data source', () => {
   const featuredProducts = featuredProductsDataSource.listFeaturedProducts();

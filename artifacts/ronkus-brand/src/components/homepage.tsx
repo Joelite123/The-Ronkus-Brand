@@ -3,12 +3,8 @@ import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
-  ChevronDown,
   Instagram,
-  Menu,
   Search,
-  ShoppingBag,
-  X,
 } from 'lucide-react';
 import {
   categories,
@@ -18,8 +14,10 @@ import {
 } from '@/data/catalog';
 import { featuredProductsDataSource } from '@/data/featured-products';
 import { CustomizeItemDialog } from '@/components/customize-item-dialog';
-import { ShoppingCartDialog } from '@/components/shopping-cart-dialog';
+import { HomeAnchorLink } from '@/components/site-layout';
 import { useShop } from '@/components/shop-provider';
+import { getCategoryPath } from '@/lib/catalog';
+import { Link } from 'wouter';
 import {
   createCartItemDraft,
   filterProducts,
@@ -31,125 +29,6 @@ import {
 
 const instagramUrl = 'https://instagram.com/the_ronkus_brand?dlrf=MTBzaDJjY3dybGhlOA%3D%3D';
 const facebookUrl = 'https://www.facebook.com/share/14sWXoMEgGM/';
-const navItems = [
-  { label: 'Home', href: '#home' },
-  { label: 'Shoemaking Academy', href: '#academy' },
-  { label: 'FAQ', href: '#footer' },
-  { label: 'Contact / About Us', href: '#footer' },
-];
-
-function BrandLogo({ className = '' }: { className?: string }) {
-  return (
-    <a className={`brand-logo ${className}`} href="#home" aria-label="The Ronkus Brand home">
-      <img src="/assets/logo.png" alt="The Ronkus Brand" />
-    </a>
-  );
-}
-
-function Header({ onSelectCategory }: { onSelectCategory: (category: string) => void }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [shopOpen, setShopOpen] = useState(false);
-  const { itemCount, setCartOpen } = useShop();
-
-  const closeMenus = () => {
-    setMobileOpen(false);
-    setShopOpen(false);
-  };
-
-  return (
-    <header className="site-header">
-      <div className="page-shell header-inner">
-        <BrandLogo />
-        <nav className="desktop-nav" aria-label="Main navigation">
-          <a href="#home">Home</a>
-          <div className="shop-nav-wrap">
-            <button
-              className={`nav-shop ${shopOpen ? 'is-open' : ''}`}
-              type="button"
-              aria-expanded={shopOpen}
-              aria-controls="shop-menu"
-              onClick={() => setShopOpen(!shopOpen)}
-            >
-              Shop <ChevronDown size={14} />
-            </button>
-            {shopOpen && (
-              <div className="shop-dropdown" id="shop-menu">
-                {categories.map((category) => (
-                  <a
-                    key={category.name}
-                    href="#products"
-                    onClick={() => {
-                      closeMenus();
-                      onSelectCategory(category.name);
-                    }}
-                  >
-                    {category.name}
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-          {navItems.slice(1).map((item) => (
-            <a href={item.href} key={item.label}>{item.label}</a>
-          ))}
-        </nav>
-        <div className="header-actions">
-          <button
-            className="cart-link"
-            type="button"
-            aria-label={`Open shopping bag, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
-            aria-haspopup="dialog"
-            onClick={() => setCartOpen(true)}
-          >
-            <ShoppingBag size={19} strokeWidth={1.6} />
-            {itemCount > 0 && <span className="cart-count" aria-hidden="true">{itemCount}</span>}
-          </button>
-          <button
-            className="mobile-menu-button"
-            type="button"
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={mobileOpen}
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </div>
-      </div>
-      {mobileOpen && (
-        <nav className="mobile-nav" aria-label="Mobile navigation">
-          <a href="#home" onClick={closeMenus}>Home</a>
-          <button
-            className="mobile-shop-toggle"
-            type="button"
-            aria-expanded={shopOpen}
-            onClick={() => setShopOpen(!shopOpen)}
-          >
-            Shop <ChevronDown size={16} />
-          </button>
-          {shopOpen && (
-            <div className="mobile-shop-list">
-              {categories.map((category) => (
-                <a
-                  href="#products"
-                  key={category.name}
-                  onClick={() => {
-                    closeMenus();
-                    onSelectCategory(category.name);
-                  }}
-                >
-                  {category.name}
-                </a>
-              ))}
-            </div>
-          )}
-          {navItems.slice(1).map((item) => (
-            <a href={item.href} key={item.label} onClick={closeMenus}>{item.label}</a>
-          ))}
-        </nav>
-      )}
-    </header>
-  );
-}
 
 function Hero() {
   return (
@@ -162,7 +41,7 @@ function Hero() {
           </p>
           <div className="hero-actions">
             <a className="button-primary" href="#products">Shop Collection <ArrowRight size={16} /></a>
-            <a className="button-outline" href="#community">Join the Community</a>
+            <HomeAnchorLink className="button-outline" id="community">Join the Community</HomeAnchorLink>
           </div>
           <div className="hero-footnote">
             <span className="gold-rule" />
@@ -208,7 +87,7 @@ function SectionHeading({
   );
 }
 
-function CategorySection({ onSelectCategory }: { onSelectCategory: (category: string) => void }) {
+function CategorySection() {
   return (
     <section className="category-section page-shell" id="categories">
       <div className="category-heading-row">
@@ -217,11 +96,10 @@ function CategorySection({ onSelectCategory }: { onSelectCategory: (category: st
       </div>
       <div className="category-grid">
         {categories.map((category, index) => (
-          <a
+          <Link
             className={`category-card category-card-${index + 1}`}
-            href="#products"
+            href={getCategoryPath(category)}
             key={category.name}
-            onClick={() => onSelectCategory(category.name)}
           >
             <img src={category.image} alt="" loading="eager" />
             <span className="category-shade" />
@@ -233,7 +111,7 @@ function CategorySection({ onSelectCategory }: { onSelectCategory: (category: st
               </span>
             </span>
             <span className="category-arrow" aria-hidden="true"><ArrowRight size={18} /></span>
-          </a>
+          </Link>
         ))}
       </div>
     </section>
@@ -313,7 +191,7 @@ function ProductSelectors({
   );
 }
 
-function ProductCard({
+export function ProductCard({
   product,
   index,
   onCustomize,
@@ -624,63 +502,11 @@ function AcademySection() {
   );
 }
 
-function Footer({ onSelectCategory }: { onSelectCategory: (category: string) => void }) {
-  return (
-    <footer className="site-footer" id="footer">
-      <div className="page-shell footer-main">
-        <div className="footer-brand-column">
-          <BrandLogo className="footer-logo" />
-          <p>Handcrafted fashion and personal details to bring your whole look together.</p>
-          <div className="footer-socials">
-            <a href={instagramUrl} target="_blank" rel="noreferrer" aria-label="The Ronkus Brand on Instagram"><Instagram size={17} /></a>
-            <a href={facebookUrl} target="_blank" rel="noreferrer" aria-label="The Ronkus Brand on Facebook">f</a>
-          </div>
-          <a className="footer-email" href="mailto:theronkusbrand@gmail.com">theronkusbrand@gmail.com</a>
-        </div>
-        <div className="footer-links-column">
-          <p className="footer-column-title">Explore</p>
-          <a href="#home">Home</a>
-          <a href="#products">Shop</a>
-          <a href="#academy">Shoemaking Academy</a>
-          <a href="#footer">FAQ</a>
-          <a href="#footer">Contact / About Us</a>
-        </div>
-        <div className="footer-links-column">
-          <p className="footer-column-title">Shop categories</p>
-          {categories.map((category) => (
-            <a
-              href="#products"
-              key={category.name}
-              onClick={() => onSelectCategory(category.name)}
-            >
-              {category.name}
-            </a>
-          ))}
-        </div>
-        <div className="footer-note">
-          <span>Personal expression,</span>
-          <em>made tangible.</em>
-          <span className="footer-flourish">TRB · BN 7907530</span>
-        </div>
-      </div>
-      <div className="page-shell footer-bottom">
-        <span>© {new Date().getFullYear()} The Ronkus Brand</span>
-        <a href="#home">Back to top <ArrowRight size={14} /></a>
-      </div>
-    </footer>
-  );
-}
-
 export default function Homepage() {
   const { addItem, setCartOpen } = useShop();
   const [activeCategory, setActiveCategory] = useState('All categories');
   const [searchText, setSearchText] = useState('');
   const [customizeTarget, setCustomizeTarget] = useState<{ product: Product; color: string } | null>(null);
-
-  const selectCategory = (category: string) => {
-    setActiveCategory(category);
-    setSearchText('');
-  };
 
   const addCustomizedItem = (customization: CustomizationDetails) => {
     if (!customizeTarget) return;
@@ -695,30 +521,25 @@ export default function Homepage() {
 
   return (
     <>
-      <Header onSelectCategory={selectCategory} />
-      <main>
-        <Hero />
-        <CategorySection onSelectCategory={selectCategory} />
-        <ProductSection
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
-          searchText={searchText}
-          onSearchChange={setSearchText}
-          onCustomize={(product, color) => setCustomizeTarget({ product, color })}
-        />
-        <CraftsmanshipSection />
-        <TestimonialsSection />
-        <CommunitySection />
-        <AcademySection />
-      </main>
-      <Footer onSelectCategory={selectCategory} />
+      <Hero />
+      <CategorySection />
+      <ProductSection
+        activeCategory={activeCategory}
+        onCategoryChange={setActiveCategory}
+        searchText={searchText}
+        onSearchChange={setSearchText}
+        onCustomize={(product, color) => setCustomizeTarget({ product, color })}
+      />
+      <CraftsmanshipSection />
+      <TestimonialsSection />
+      <CommunitySection />
+      <AcademySection />
       <CustomizeItemDialog
         product={customizeTarget?.product ?? null}
         selectedColor={customizeTarget?.color}
         onClose={() => setCustomizeTarget(null)}
         onAddToCart={addCustomizedItem}
       />
-      <ShoppingCartDialog />
     </>
   );
 }

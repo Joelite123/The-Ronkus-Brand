@@ -50,7 +50,7 @@ export const categories: Category[] = [
   },
   {
     name: 'Clothing & Fabrics',
-    subcategories: ['Vintage Shirts', 'Tees', 'Hoodies', 'Sweatshirts', 'T-Shirts', 'African Print Fabrics'],
+    subcategories: ['Vintage Shirts', 'Tees', 'Hoodies', 'Sweatshirts', 'Joggers', 'T-Shirts', 'African Print Fabrics'],
     image: '/assets/african-fabric.jpg',
   },
   {
