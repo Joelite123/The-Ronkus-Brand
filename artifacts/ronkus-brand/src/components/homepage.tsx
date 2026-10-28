@@ -495,7 +495,7 @@ function AcademySection() {
         <p>
           Turn your interest in shoemaking into practical skills with The Ronkus Brand Shoemaking Academy. Learn the craft while developing the creative and business skills to take your ideas further.
         </p>
-        <a className="button-light" href="#academy">Explore the Shoemaking Academy <ArrowRight size={16} /></a>
+        <Link className="button-light" href="/academy">Explore the Shoemaking Academy <ArrowRight size={16} /></Link>
       </div>
       <span className="academy-mark" aria-hidden="true">R</span>
     </section>

@@ -7,6 +7,8 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import Homepage from '@/components/homepage';
 import { SiteLayout } from '@/components/site-layout';
 import { FaqPage } from '@/pages/faq-page';
+import { AcademyPage } from '@/pages/academy-page';
+import { academyData } from '@/data/academy';
 import {
   CategoryPage,
   ComingSoonPage,
@@ -95,7 +97,7 @@ function getPageTitle(location: string): string {
     return `${category.name} | The Ronkus Brand`;
   }
   const pageTitles: Record<string, string> = {
-    academy: 'Shoemaking Academy',
+    academy: academyData.title,
     faq: 'FAQ',
     contact: 'Contact / About Us',
   };
@@ -130,7 +132,7 @@ function Router() {
           <Route path="/shop" component={ShopOverviewPage} />
           <Route path="/shop/:category/:subcategory"><CategoryRoute /></Route>
           <Route path="/shop/:category"><CategoryRootRoute /></Route>
-          <Route path="/academy"><ComingSoonPage title="Shoemaking Academy" /></Route>
+          <Route path="/academy" component={AcademyPage} />
           <Route path="/faq" component={FaqPage} />
           <Route path="/contact"><ComingSoonPage title="Contact / About Us" /></Route>
           <Route component={NotFound} />

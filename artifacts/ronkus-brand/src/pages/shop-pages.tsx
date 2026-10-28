@@ -160,7 +160,7 @@ function CategoryProducts({
           <h2>New pieces arriving soon</h2>
           <p>
             {subcategory
-              ? `We are preparing new ${subcategory.toLowerCase()} pieces. Message us on WhatsApp and we will be happy to help.`
+              ? `We are adding new pieces to ${subcategory}. Message us on WhatsApp and we will be happy to help.`
               : `We are preparing more ${category.name.toLowerCase()} for you. Get in touch and we will be happy to help.`}
           </p>
           <a
