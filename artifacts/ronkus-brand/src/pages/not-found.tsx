@@ -1,23 +1,21 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { AlertCircle } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { Link } from 'wouter';
+import { LogoBackdrop } from '@/components/logo-backdrop';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md mx-4">
-        <CardContent className="pt-6">
-          <div className="flex mb-4 gap-2">
-            <AlertCircle className="h-8 w-8 text-red-500" />
-            <h1 className="text-2xl font-bold text-gray-900">
-              404 Page Not Found
-            </h1>
-          </div>
-
-          <p className="mt-4 text-sm text-gray-600">
-            Did you forget to add the page to the router?
-          </p>
-        </CardContent>
-      </Card>
-    </div>
+    <section className="backdrop-page not-found-page">
+      <LogoBackdrop density="medium" />
+      <div className="not-found-content page-shell">
+        <p className="eyebrow">The Ronkus Brand</p>
+        <span className="not-found-code" aria-hidden="true">404</span>
+        <h1>We couldn't find that page.</h1>
+        <p>The page may have moved, or the address may be incorrect. Find your way back to something made for you.</p>
+        <div className="not-found-actions">
+          <Link className="button-primary" href="/">Home <ArrowRight size={16} aria-hidden="true" /></Link>
+          <Link className="button-outline" href="/shop">Browse the Shop <ArrowRight size={16} aria-hidden="true" /></Link>
+        </div>
+      </div>
+    </section>
   );
 }

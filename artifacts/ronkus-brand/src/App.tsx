@@ -8,10 +8,10 @@ import Homepage from '@/components/homepage';
 import { SiteLayout } from '@/components/site-layout';
 import { FaqPage } from '@/pages/faq-page';
 import { AcademyPage } from '@/pages/academy-page';
+import ContactPage from '@/pages/contact-page';
 import { academyData } from '@/data/academy';
 import {
   CategoryPage,
-  ComingSoonPage,
   ShopOverviewPage,
   isKnownCategoryRoute,
 } from '@/pages/shop-pages';
@@ -84,8 +84,8 @@ function CategoryRootRoute() {
 function getPageTitle(location: string): string {
   const segments = location.split('/').filter(Boolean);
   if (segments.length === 0) return 'Home | The Ronkus Brand';
-  if (location === '/shop') return 'Shop | The Ronkus Brand';
-  if (segments[0] === 'shop' && segments[1]) {
+  if (segments[0] === 'shop' && segments.length === 1) return 'Shop | The Ronkus Brand';
+  if (segments[0] === 'shop' && segments.length <= 3 && segments[1]) {
     const category = findCategoryBySlug(segments[1]);
     if (!category) return 'Page Not Found | The Ronkus Brand';
     if (segments[2]) {
@@ -97,13 +97,52 @@ function getPageTitle(location: string): string {
     return `${category.name} | The Ronkus Brand`;
   }
   const pageTitles: Record<string, string> = {
-    academy: academyData.title,
-    faq: 'FAQ',
-    contact: 'Contact / About Us',
+    '/academy': academyData.title,
+    '/faq': 'FAQ',
+    '/contact': 'Contact & About Us',
   };
-  return pageTitles[segments[0]]
-    ? `${pageTitles[segments[0]]} | The Ronkus Brand`
+  const pageTitle = pageTitles[`/${segments.join('/')}`];
+  return pageTitle
+    ? `${pageTitle} | The Ronkus Brand`
     : 'Page Not Found | The Ronkus Brand';
+}
+
+function getPageDescription(location: string): string {
+  const segments = location.split('/').filter(Boolean);
+  if (segments.length === 0) {
+    return 'Discover handcrafted footwear, expressive fashion, statement accessories and personalized pieces from The Ronkus Brand.';
+  }
+  if (segments[0] === 'shop' && segments.length <= 3) {
+    if (segments.length === 1) {
+      return 'Explore all handcrafted footwear, clothing, bags, hair accessories and lifestyle pieces from The Ronkus Brand.';
+    }
+    const category = findCategoryBySlug(segments[1]);
+    if (!category) return 'The page you are looking for could not be found. Explore The Ronkus Brand shop or return home.';
+    if (segments[2]) {
+      const subcategory = findSubcategoryBySlug(category, segments[2]);
+      return subcategory
+        ? `Shop ${subcategory} from The Ronkus Brand, crafted to complete your outfit with comfort and style.`
+        : 'The page you are looking for could not be found. Explore The Ronkus Brand shop or return home.';
+    }
+    return `Discover ${category.name} from The Ronkus Brand, made to complete your outfit with comfort and style.`;
+  }
+  const pageDescriptions: Record<string, string> = {
+    '/academy': academyData.intro,
+    '/faq': 'Find answers about ordering, custom orders, delivery, payment and the Shoemaking Academy.',
+    '/contact': 'Learn the story behind The Ronkus Brand and get in touch about orders, custom pieces and more.',
+  };
+  return pageDescriptions[`/${segments.join('/')}`]
+    ?? 'The page you are looking for could not be found. Explore The Ronkus Brand shop or return home.';
+}
+
+function updateMetaTag(selector: string, attribute: 'name' | 'property', key: string, content: string) {
+  let meta = document.head.querySelector<HTMLMetaElement>(selector);
+  if (!meta) {
+    meta = document.createElement('meta');
+    meta.setAttribute(attribute, key);
+    document.head.append(meta);
+  }
+  meta.content = content;
 }
 
 function Router() {
@@ -111,7 +150,13 @@ function Router() {
   const previousLocation = useRef(location);
 
   useEffect(() => {
-    document.title = getPageTitle(location);
+    const title = getPageTitle(location);
+    const description = getPageDescription(location);
+    document.title = title;
+    updateMetaTag('meta[name="description"]', 'name', 'description', description);
+    updateMetaTag('meta[property="og:title"]', 'property', 'og:title', title);
+    updateMetaTag('meta[property="og:description"]', 'property', 'og:description', description);
+    updateMetaTag('meta[property="og:url"]', 'property', 'og:url', `https://theronkusbrand.com.ng${location}`);
     const previousCategoryRoute = /^\/shop\/([^/]+)(?:\/[^/]+)?$/.exec(previousLocation.current);
     const currentCategoryRoute = /^\/shop\/([^/]+)(?:\/[^/]+)?$/.exec(location);
     const categoryFilterChanged = previousCategoryRoute
@@ -134,7 +179,7 @@ function Router() {
           <Route path="/shop/:category"><CategoryRootRoute /></Route>
           <Route path="/academy" component={AcademyPage} />
           <Route path="/faq" component={FaqPage} />
-          <Route path="/contact"><ComingSoonPage title="Contact / About Us" /></Route>
+          <Route path="/contact" component={ContactPage} />
           <Route component={NotFound} />
         </Switch>
       </RoutedErrorBoundary>

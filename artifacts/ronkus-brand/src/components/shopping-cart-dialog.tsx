@@ -117,7 +117,7 @@ export function ShoppingCartDialog() {
             <div className="cart-item-list" aria-label="Items in your cart">
               {items.map((item) => (
                 <article className="cart-item" key={item.key}>
-                  <img src={item.image} alt="" />
+                  <img src={item.image} alt="" width="104" height="124" loading="lazy" decoding="async" />
                   <div className="cart-item-main">
                     <div className="cart-item-heading">
                       <div>

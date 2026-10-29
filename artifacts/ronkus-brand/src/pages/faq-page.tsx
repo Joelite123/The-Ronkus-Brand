@@ -98,7 +98,7 @@ export function FaqPage() {
               className="button-primary"
               href={buildWhatsAppUrl('Hello The Ronkus Brand, I have a question.')}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
             >
               <MessageCircle size={16} /> Chat with us on WhatsApp
             </a>

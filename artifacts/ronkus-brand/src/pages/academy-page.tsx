@@ -53,7 +53,7 @@ function AcademyPage() {
                 className="button-primary"
                 href={academyEnquiryUrl(primaryMessage)}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
               >
                 <MessageCircle size={16} /> {primaryLabel}
               </a>
@@ -106,7 +106,7 @@ function AcademyPage() {
                       ),
                     )}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                   >
                     <MessageCircle size={16} /> {academyData.programmeEnquireButton}
                   </a>
@@ -163,7 +163,7 @@ function AcademyPage() {
             </div>
             <div className="academy-gallery">
               {academyData.gallery.map((image) => (
-                <img src={image.src} alt={image.alt} key={image.src} loading="lazy" />
+                <img src={image.src} alt={image.alt} key={image.src} width="640" height="480" loading="lazy" decoding="async" />
               ))}
             </div>
           </section>
@@ -179,7 +179,7 @@ function AcademyPage() {
               className="button-primary"
               href={academyEnquiryUrl(primaryMessage)}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
             >
               <MessageCircle size={16} /> {primaryLabel} <ArrowRight size={16} />
             </a>

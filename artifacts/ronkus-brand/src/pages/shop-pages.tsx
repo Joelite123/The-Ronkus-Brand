@@ -24,7 +24,7 @@ function CategoryCards() {
           href={getCategoryPath(category)}
           key={category.name}
         >
-          <img src={category.image} alt="" />
+          <img src={category.image} alt="" width="640" height="480" loading="lazy" decoding="async" />
           <span className="category-shade" />
           <span className="category-card-content">
             <span className="category-number">0{index + 1}</span>
@@ -204,7 +204,8 @@ export function CategoryPage({
     <section className="category-page">
       <LogoBackdrop density="high" />
       <div className="category-page-content">
-        <header className="category-banner" style={{ backgroundImage: `url("${category.image}")` }}>
+        <header className="category-banner">
+          <img className="category-banner-image" src={category.image} alt={`${category.name} collection`} width="1600" height="520" fetchPriority="high" decoding="async" />
           <div className="category-banner-inner page-shell">
             <p className="eyebrow">The Ronkus Brand collection</p>
             <h1>{category.name}</h1>

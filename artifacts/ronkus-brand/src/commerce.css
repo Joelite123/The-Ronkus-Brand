@@ -60,7 +60,8 @@
 }
 
 .product-search input::placeholder {
-  color: #8d8175;
+  color: #62574d;
+  opacity: 1;
 }
 
 .product-search button {
@@ -129,7 +130,7 @@
 .product-action-button:disabled {
   border-color: #d9d0c3;
   background: #e9e2d7;
-  color: #75695f;
+  color: #62574d;
   cursor: not-allowed;
 }
 
@@ -160,7 +161,7 @@
 .product-action-button.product-action-secondary:disabled {
   border-color: #d9d0c3;
   background: transparent;
-  color: #867a70;
+  color: #62574d;
 }
 
 .product-added-note {
@@ -356,7 +357,7 @@
   display: block;
   width: 104px;
   height: 124px;
-  object-fit: cover;
+  object-fit: contain;
   background: #e9e1d5;
 }
 
@@ -455,7 +456,7 @@
   display: grid;
   justify-items: end;
   gap: 3px;
-  color: #796d62;
+  color: #62574d;
   font-size: 0.65rem;
 }
 
@@ -502,7 +503,7 @@
 .cart-summary > p,
 .checkout-note {
   margin: 10px 0 15px;
-  color: #81766a;
+  color: #62574d;
   font-size: 0.65rem;
   line-height: 1.5;
 }
@@ -610,7 +611,8 @@
   display: block;
   width: 73px;
   height: 78px;
-  object-fit: cover;
+  object-fit: contain;
+  background: #e9e1d5;
 }
 
 .customize-product-summary div {
@@ -677,7 +679,8 @@
 
 .commerce-field textarea::placeholder,
 .commerce-field input::placeholder {
-  color: #96897c;
+  color: #62574d;
+  opacity: 1;
 }
 
 .field-help,
@@ -688,7 +691,7 @@
 }
 
 .field-help {
-  color: #81766a;
+  color: #62574d;
 }
 
 .field-error {

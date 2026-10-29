@@ -67,7 +67,7 @@ export function CustomizeItemDialog({
               </DialogDescription>
             </DialogHeader>
             <div className="customize-product-summary">
-              <img src={product.image} alt="" />
+              <img src={product.image} alt="" width="73" height="78" decoding="async" />
               <div>
                 <strong>{product.name}</strong>
                 <span>Selected colour: {selectedColor}</span>

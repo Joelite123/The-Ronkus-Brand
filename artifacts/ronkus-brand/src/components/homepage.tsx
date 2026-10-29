@@ -40,7 +40,7 @@ function Hero() {
             Discover handcrafted footwear, expressive fashion, statement accessories and personalized pieces made to complement your style.
           </p>
           <div className="hero-actions">
-            <a className="button-primary" href="#products">Shop Collection <ArrowRight size={16} /></a>
+            <HomeAnchorLink className="button-primary" id="products">Shop Collection <ArrowRight size={16} /></HomeAnchorLink>
             <HomeAnchorLink className="button-outline" id="community">Join the Community</HomeAnchorLink>
           </div>
           <div className="hero-footnote">
@@ -50,7 +50,7 @@ function Hero() {
         </div>
         <div className="hero-visual">
           <div className="hero-photo-frame">
-            <img src="/assets/fashion-editorial.jpg" alt="Ronkus Brand fashion, expressive footwear and a vivid patterned shirt" />
+            <img src="/assets/fashion-editorial.jpg" alt="Ronkus Brand fashion, expressive footwear and a vivid patterned shirt" width="1000" height="1200" fetchPriority="high" decoding="async" />
           </div>
           <div className="hero-photo-caption">
             <span>Wear what feels like you</span>
@@ -101,7 +101,7 @@ function CategorySection() {
             href={getCategoryPath(category)}
             key={category.name}
           >
-            <img src={category.image} alt="" loading="eager" />
+            <img src={category.image} alt="" width="640" height="480" loading="lazy" decoding="async" />
             <span className="category-shade" />
             <span className="category-card-content">
               <span className="category-number">0{index + 1}</span>
@@ -236,7 +236,14 @@ export function ProductCard({
       id={product.customization?.enabled ? 'product-customize' : `product-${product.id}`}
     >
       <div className="product-image-wrap">
-        <img src={product.image} alt={product.name} loading="eager" />
+        <img
+          src={product.image}
+          alt={product.name}
+          width="640"
+          height="640"
+          loading="lazy"
+          decoding="async"
+        />
         {product.availability && <span className="product-badge">{product.availability}</span>}
         <span className="product-index">0{index + 1}</span>
       </div>
@@ -381,7 +388,7 @@ function CraftsmanshipSection() {
           <span className="craft-signature">The Ronkus Brand</span>
         </div>
         <figure className="certificate-frame">
-          <img src="/assets/cac-registration.jpg" alt="The Ronkus Brand Certificate of Registration from the Corporate Affairs Commission" loading="eager" />
+          <img src="/assets/cac-registration.jpg" alt="The Ronkus Brand Certificate of Registration from the Corporate Affairs Commission" width="900" height="1100" loading="lazy" decoding="async" />
           <figcaption>Registration document</figcaption>
         </figure>
         <span className="craft-side-note" aria-hidden="true">DETAILS MATTER · MADE WITH CARE ·</span>
@@ -419,7 +426,7 @@ function CarouselSection({
       >
         {items.map((item, index) => (
           <figure className="carousel-item" key={item.src}>
-            <img src={item.src} alt={item.alt} loading="eager" />
+            <img src={item.src} alt={item.alt} width="640" height="760" loading="lazy" decoding="async" />
             <figcaption className="sr-only">
               {testimonials ? `Customer testimonial ${index + 1}` : item.alt}
             </figcaption>
@@ -473,10 +480,10 @@ function CommunitySection() {
           <div className="community-copy">
             <p>Style is even better when it is shared. Discover the people, creativity and individuality behind The Ronkus Brand.</p>
             <div className="social-actions">
-              <a className="button-primary" href={instagramUrl} target="_blank" rel="noreferrer">
+              <a className="button-primary" href={instagramUrl} target="_blank" rel="noopener noreferrer">
                 <Instagram size={16} /> Follow on Instagram
               </a>
-              <a className="social-text-link" href={facebookUrl} target="_blank" rel="noreferrer">Find us on Facebook <ArrowRight size={14} /></a>
+              <a className="social-text-link" href={facebookUrl} target="_blank" rel="noopener noreferrer">Find us on Facebook <ArrowRight size={14} /></a>
             </div>
           </div>
         </div>
